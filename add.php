@@ -1,3 +1,23 @@
+
+<?php
+include 'login_checker.php';
+include 'db_connect.php';
+
+
+session_start();
+include_once 'dbconnect.php';
+
+if(!isset($_SESSION['user']))
+{
+    header("Location: login.php");
+}
+$res=mysql_query("SELECT * FROM b_users WHERE user_id=".$_SESSION['user']);
+$userRow=mysql_fetch_array($res);
+?>
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -82,7 +102,7 @@
             <div class="box">
                 <div class="col-lg-12">
                     <hr>
-                    <h2 class="intro-text text-center">Find Your location!
+                    <h2 class="intro-text text-center">Add An Offer!
                        
                     </h2>
 
@@ -96,50 +116,32 @@
     <div>
 </head>
 <body>
+<center>
+    <div id="content">
+           <h1> hi <?php echo $userRow['business_name']; ?></h1>&nbsp;<a href="logout.php?logout">Sign Out</a>
+        </div>
 
-<p>Dont know your coordinates?</p>
-
-<button onclick="getLocation()">Click Here to get them!</button>
-
-<p id="demo"></p>
-
-<script>
-var x = document.getElementById("demo");
-
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else { 
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;  
-}
-</script>
 
 <form action="insert.php" method="post">
     <p>
         <label for="name">Business Name:</label>
-        <input type="text" name="name" id="name">
+       <input type="text" name="name" value="<?php echo $userRow['business_name'];?>" />
     </p>
     <p>
         <label for="address">Address:</label>
-        <input type="text" name="address" id="address">
+        <input type="text" name="address" value="<?php echo $userRow['address'];?>" id="address">
     </p>
     <p>
         <label for="offer">Offer:</label>
-        <input type="text" name="offer" id="offer">
+        <input type="text" name="offer"  id="offer">
     </p>
      <p>
         <label for="lat">lat:</label>
-        <input type="text" name="lat" id="lat">
+        <input type="text" name="lat" value="<?php echo $userRow['location_lat'];?>" id="lat">
     </p>
      <p>
         <label for="lng">lng:</label>
-        <input type="text" name="lng" id="lng">
+        <input type="text" name="lng" value="<?php echo $userRow['location_lng'];?>" id="lng">
     </p>
     <input type="submit" value="Submit">
 </form>
