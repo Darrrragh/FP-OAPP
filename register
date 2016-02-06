@@ -1,0 +1,124 @@
+<?php
+session_start();
+if(isset($_SESSION['user'])!="")
+{
+	header("Location: home.php");
+}
+include_once 'dbconnect.php';
+
+if(isset($_POST['btn-signup']))
+{
+	$username = mysql_real_escape_string($_POST['username']);
+	$email = mysql_real_escape_string($_POST['email']);
+	$password = md5(mysql_real_escape_string($_POST['password']));
+	$address = mysql_real_escape_string($_POST['address']);
+	$lat = mysql_real_escape_string($_POST['location_lat']);
+	$lng = mysql_real_escape_string($_POST['location_lng']);
+	$business_name = mysql_real_escape_string($_POST['business_name']);
+	
+	$username = trim($username);
+	$email = trim($email);
+	$password = trim($password);
+	$address = trim($address);
+	$lat = trim($lat);
+	$lng = trim($lng);
+	
+	// email exist or not
+	$query = "SELECT email FROM b_users WHERE email='$email'";
+	$result = mysql_query($query);
+	
+	$count = mysql_num_rows($result); // if email not found then register
+	
+	if($count == 0){
+		
+		if(mysql_query("INSERT INTO b_users(username,email,password, address, location_lat, location_lng, business_name) VALUES('$username','$email','$password','$address','$lat','$lng','$business_name')"))
+		{
+			?>
+			<script>alert('successfully registered ');</script>
+			<?php
+
+			header("Location: login.php");
+		}
+		else
+		{
+			?>
+			<script>alert('error while registering you...');</script>
+			<?php
+		}		
+	}
+	else{
+			?>
+			<script>alert('Sorry Email ID already taken ...');</script>
+			<?php
+	}
+	
+}
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Coding Cage - Login & Registration System</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+<body>
+<center>
+<div id="login-form">
+<form method="post">
+<table align="center" width="30%" border="0">
+<tr>
+<td><input type="text" name="username" placeholder="User Name" required /></td>
+</tr>
+<tr>
+<td><input type="text" name="business_name" placeholder="Your Business/Trading Name" required /></td>
+</tr>
+<tr>
+<td><input type="email" name="email" placeholder="Your Email" required /></td>
+</tr>
+<tr>
+<td><input type="password" name="password" placeholder="Your Password" required /></td>
+</tr>
+<tr>
+<td><input type="text" name="address" placeholder="Your Address" required /></td>
+</tr>
+<p>Dont know your coordinates?</p>
+
+<button onclick="getLocation()">Click Here to get them!</button>
+
+<p id="demo"></p>
+
+<script>
+var x = document.getElementById("demo");
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+    x.innerHTML = "Latitude: " + position.coords.latitude + 
+    "<br>Longitude: " + position.coords.longitude;  
+}
+</script>
+<tr>
+<td><input type="text" name="location_lat" placeholder="Your Latittude" required /></td>
+</tr>
+<tr>
+<td><input type="text" name="location_lng" placeholder="Your Longitude" required /></td>
+</tr>
+<tr>
+<td><button type="submit" name="btn-signup">Sign Me Up</button></td>
+</tr>
+<tr>
+<td><a href="login.php">Sign In Here</a></td>
+</tr>
+</table>
+</form>
+</div>
+</center>
+</body>
+</html>
