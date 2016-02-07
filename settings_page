@@ -1,0 +1,52 @@
+<?php
+
+
+
+include 'login_checker.php';
+include 'db_connect.php';
+
+
+session_start();
+include_once 'dbconnect.php';
+
+if(!isset($_SESSION['user']))
+{
+    header("Location: login.php");
+}
+
+// $username="root";
+// $password="";
+// $database="darragh";
+// $host='127.0.0.1';
+
+// $link = mysqli_connect($host, $username, $password, $database);
+ 
+// // Check connection
+// if($link === false){
+//     die("ERROR: Could not connect. " . mysqli_connect_error());
+// }
+ 
+// Escape user inputs for security
+$business_name = mysqli_real_escape_string($link, $_POST['business_name']);
+$address = mysqli_real_escape_string($link, $_POST['address']);
+$lat = mysqli_real_escape_string($link, $_POST['location_lat']);
+$lng = mysqli_real_escape_string($link, $_POST['location_lng']);
+
+$userid= $_SESSION['user'];
+ 
+// attempt insert query execution
+
+
+$sql = "UPDATE b_users SET business_name = '$business_name', address= '$address', location_lat ='$lat', location_lng = '$lng' WHERE user_id = '$userid'";
+if(mysqli_query($link, $sql)){
+    echo "Records added successfully.";
+    header("Location: add.php");
+} else{
+    echo "ERROR: Could not able to execute $sql. " . mysqli_error($link);
+}
+
+
+ 
+// close connection
+mysqli_close($link);
+?>
